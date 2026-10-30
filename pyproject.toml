@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chemistry-engine"
+version = "0.1.0"
+description = "A real chemistry engine: formula parsing, molar mass, exact equation balancing, and stoichiometry"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "chemistry-engine contributors" }]
+keywords = ["chemistry", "stoichiometry", "chemical-formula", "balancing"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Chemistry",
+]
+dependencies = []
+
+[project.scripts]
+chem = "chemistry_engine.cli:main"
+
+[project.urls]
+Repository = "https://github.com/mty2024/chemistry-engine"
+Changelog = "https://github.com/mty2024/chemistry-engine/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+include = ["chemistry_engine*"]
