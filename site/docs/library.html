@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Python API — chemistry-engine</title>
+  <meta name="description" content="The chemistry-engine Python API: formulas, molar mass and composition, exact balancing, stoichiometry, and the error model.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("chemistry-engine-theme");
+        var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = stored || (dark ? "dark" : "light");
+      } catch (error) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script defer src="../assets/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="../index.html">
+        <img src="../assets/logo.svg" alt="" width="34" height="34">
+        <span>chemistry-engine<small>pure python chemistry engine</small></span>
+      </a>
+      <nav class="nav" id="primary-nav" data-nav aria-label="Primary">
+        <a href="index.html">Docs</a>
+        <a href="cli.html">CLI</a>
+        <a href="library.html" aria-current="page">Library</a>
+        <a href="examples.html">Examples</a>
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub ↗</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"></path></svg>
+        </button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="docs-hero">
+      <div class="container">
+        <ol class="breadcrumb">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="index.html">Docs</a></li>
+          <li>Python API</li>
+        </ol>
+        <h1>Python API</h1>
+        <p>Everything the CLI does is available as a typed Python API — formulas, properties, balancing, and stoichiometry.</p>
+      </div>
+    </section>
+
+    <div class="container docs-layout">
+      <aside class="docs-sidebar">
+        <p class="sidebar-title">Documentation</p>
+        <nav data-docs-nav aria-label="Documentation">
+          <a href="index.html">Getting started</a>
+          <a href="cli.html">Command line</a>
+          <a href="library.html">Python API</a>
+          <a href="examples.html">Worked examples</a>
+        </nav>
+        <hr class="sidebar-sep">
+        <nav aria-label="Elsewhere">
+          <a href="../index.html">Project home</a>
+          <a href="https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0" rel="noopener">Release v0.1.0</a>
+          <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub</a>
+        </nav>
+      </aside>
+
+      <article class="doc-body">
+        <h2>Import</h2>
+        <pre><code>from chemistry_engine import (
+    Feed,
+    balance_equation,
+    molar_mass,
+    parse_formula,
+    percent_composition,
+    stoichiometry,
+)</code></pre>
+
+        <h2>Formulas</h2>
+        <p>
+          <code>parse_formula(text)</code> returns a <code>Formula</code>. Counts are
+          exact <code>Fraction</code> values, so fractional hydrates keep exact
+          stoichiometry.
+        </p>
+        <pre><code>from chemistry_engine import parse_formula
+
+formula = parse_formula("CuSO4·5H2O")
+dict(formula.atom_counts)   # {'Cu': 1, 'S': 1, 'O': 9, 'H': 10}
+formula.charge              # 0
+formula.elements            # ('H', 'O', 'S', 'Cu') — periodic-table order
+formula.hill_order()        # ('Cu', 'H', 'O', 'S') — display order
+formula.count("O")          # 9
+formula.canonical_formula() # 'CuSO4·5H2O'</code></pre>
+        <p>
+          Invalid input raises <code>FormulaParseError</code>, which carries
+          <code>formula</code>, <code>position</code>, and <code>message</code>.
+        </p>
+
+        <h2>Molar mass and composition</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Function</th><th>Returns</th></tr></thead>
+            <tbody>
+              <tr><td><code>molar_mass(formula)</code></td><td>Molar mass in g/mol.</td></tr>
+              <tr><td><code>percent_composition(formula)</code></td><td>Element symbol → mass percent (sums to 100).</td></tr>
+              <tr><td><code>mass_fractions(formula)</code></td><td>Element symbol → mass fraction (sums to 1).</td></tr>
+              <tr><td><code>elemental_analysis(formula)</code></td><td>Tuple of per-element contributions: element, count, mass, fraction.</td></tr>
+              <tr><td><code>moles_from_mass(formula, g)</code></td><td>Amount in moles.</td></tr>
+              <tr><td><code>mass_from_moles(formula, mol)</code></td><td>Mass in grams.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><code>from chemistry_engine import molar_mass, percent_composition
+
+molar_mass("C6H12O6")
+# 180.156
+percent_composition("H2O")
+# {'H': 11.19067443796836, 'O': 88.80932556203163}</code></pre>
+
+        <h2>Balancing</h2>
+        <p>
+          <code>balance_equation(equation)</code> accepts a string or a parsed
+          <code>Equation</code> and returns a <code>BalancedEquation</code>.
+        </p>
+        <pre><code>from chemistry_engine import balance_equation
+
+reaction = balance_equation("Fe^2+ + MnO4^- + H^+ -> Fe^3+ + Mn^2+ + H2O")
+reaction.formula
+# '5Fe^2+ + MnO4^- + 8H^+ -> 5Fe^3+ + Mn^2+ + 4H2O'
+reaction.coefficients
+# (5, 1, 8, 5, 1, 4)
+reaction.charge_left, reaction.charge_right
+# (17, 17)
+reaction.is_unique
+# True</code></pre>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Attribute</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>formula</code></td><td>Formatted balanced equation.</td></tr>
+              <tr><td><code>coefficients</code></td><td>Integer coefficients, reactants then products.</td></tr>
+              <tr><td><code>reactants</code>, <code>products</code></td><td>Balanced species with formula and coefficient.</td></tr>
+              <tr><td><code>element_balances</code></td><td>Per-element left/right totals, in equation reading order.</td></tr>
+              <tr><td><code>charge_left</code>, <code>charge_right</code></td><td>Net charge on each side.</td></tr>
+              <tr><td><code>is_unique</code></td><td><code>False</code> when several independent balances exist.</td></tr>
+              <tr><td><code>reversible</code></td><td>True for <code>⇌</code> / <code>&lt;=&gt;</code> arrows.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Stoichiometry</h2>
+        <pre><code>from chemistry_engine import Feed, stoichiometry
+
+result = stoichiometry(
+    "N2 + 3H2 -> 2NH3",
+    [Feed("N2", 1, "mol"), Feed("H2", 2, "mol")],
+)
+result.limiting          # ('H2',)
+result.limiting_reagent  # 'H2'
+result.extent            # 0.6666666666666666
+result.consumed          # {'N2': ..., 'H2': 2.0}
+result.remaining         # {'N2': ..., 'H2': 0.0}
+result.produced          # {'NH3': 1.3333333333333333}
+result.product_masses    # {'NH3': 22.708...}</code></pre>
+        <p>
+          <code>Feed(species, amount, unit)</code> accepts <code>mol</code>, <code>mmol</code>,
+          <code>umol</code>, <code>g</code>, <code>kg</code>, <code>mg</code>, or
+          <code>ug</code>. Every reactant must be fed, and feeding a product is a
+          <code>StoichiometryError</code>.
+        </p>
+
+        <h2>Elements</h2>
+        <pre><code>from chemistry_engine import ELEMENTS, get_element
+
+iron = get_element("Fe")          # also: "fe", "iron", 26
+iron.atomic_number                 # 26
+iron.atomic_mass                   # 55.845
+iron.has_standard_atomic_weight    # True
+len(ELEMENTS)                      # 118</code></pre>
+
+        <h2>Errors</h2>
+        <p>All deliberate errors derive from <code>ChemError</code>:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Error</th><th>Raised when</th></tr></thead>
+            <tbody>
+              <tr><td><code>FormulaParseError</code></td><td>A formula is malformed or contains an unknown symbol.</td></tr>
+              <tr><td><code>EquationParseError</code></td><td>An equation lacks an arrow or has malformed species.</td></tr>
+              <tr><td><code>UnbalanceableEquationError</code></td><td>No strictly positive integer solution exists.</td></tr>
+              <tr><td><code>StoichiometryError</code></td><td>A feed is invalid or a reactant is missing.</td></tr>
+              <tr><td><code>UnknownElementError</code></td><td>Element lookup finds nothing.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Data and correctness</h2>
+        <p>
+          Atomic weights come from the
+          <a href="https://www.ciaaw.org/abridged-atomic-weights.htm" rel="noopener">CIAAW Abridged Standard Atomic Weights 2024</a>.
+          Elements without a standard weight use the longest-lived known isotope from the
+          <a href="https://www.ciaaw.org/radioactive-elements.htm" rel="noopener">CIAAW radioactive-elements table</a>.
+          Balancing is exact rational linear algebra; no coefficient is guessed.
+        </p>
+
+        <h2>Next</h2>
+        <div class="next-links">
+          <a href="examples.html">Worked examples<span>See the API produce real chemistry.</span></a>
+          <a href="cli.html">Command line<span>Prefer the terminal? Same engine.</span></a>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="footer-brand" href="../index.html">
+            <img src="../assets/logo.svg" alt="" width="30" height="30">
+            <span>chemistry-engine</span>
+          </a>
+          <p class="footer-meta">A real chemistry engine in pure Python. Version 0.1.0.</p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="index.html">Documentation</a></li>
+          <li><a href="cli.html">CLI</a></li>
+          <li><a href="library.html">Python API</a></li>
+          <li><a href="https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0" rel="noopener">Release v0.1.0</a></li>
+          <li><a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-bottom">
+        © <span data-year>2026</span> chemistry-engine · Built from the public
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">repository</a>.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -25,3 +25,7 @@ jobs:
         run: python -m compileall -q chemistry_engine tools tests
       - name: Build release artifacts
         run: python tools/build_dist.py
+      - name: Build site data
+        run: python tools/build_site.py
+      - name: Validate site
+        run: python tools/check_site.py

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Worked examples — chemistry-engine</title>
+  <meta name="description" content="Worked chemistry-engine examples: combustion, permanganate oxidation, ionic redox, hydrates, stoichiometry, and equations with multiple independent balances.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("chemistry-engine-theme");
+        var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = stored || (dark ? "dark" : "light");
+      } catch (error) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script defer src="../assets/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="../index.html">
+        <img src="../assets/logo.svg" alt="" width="34" height="34">
+        <span>chemistry-engine<small>pure python chemistry engine</small></span>
+      </a>
+      <nav class="nav" id="primary-nav" data-nav aria-label="Primary">
+        <a href="index.html">Docs</a>
+        <a href="cli.html">CLI</a>
+        <a href="library.html">Library</a>
+        <a href="examples.html" aria-current="page">Examples</a>
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub ↗</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"></path></svg>
+        </button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="docs-hero">
+      <div class="container">
+        <ol class="breadcrumb">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="index.html">Docs</a></li>
+          <li>Worked examples</li>
+        </ol>
+        <h1>Worked examples</h1>
+        <p>Real commands and real output. Every coefficient and conservation check below came from the engine.</p>
+      </div>
+    </section>
+
+    <div class="container docs-layout">
+      <aside class="docs-sidebar">
+        <p class="sidebar-title">Documentation</p>
+        <nav data-docs-nav aria-label="Documentation">
+          <a href="index.html">Getting started</a>
+          <a href="cli.html">Command line</a>
+          <a href="library.html">Python API</a>
+          <a href="examples.html">Worked examples</a>
+        </nav>
+        <hr class="sidebar-sep">
+        <nav aria-label="Elsewhere">
+          <a href="../index.html">Project home</a>
+          <a href="https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0" rel="noopener">Release v0.1.0</a>
+          <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub</a>
+        </nav>
+      </aside>
+
+      <article class="doc-body">
+        <h2>Water formation</h2>
+        <p>The simplest balance: two hydrogen molecules and one oxygen molecule give two waters.</p>
+        <pre><code>$ chem balance "H2 + O2 -> H2O"
+2H2 + O2 -> 2H2O
+
+Atom check (elements in equation order):
+  H: 4 = 4
+  O: 2 = 2
+Charge: neutral (0 = 0)</code></pre>
+
+        <h2>Propane combustion</h2>
+        <p>Exact integer coefficients fall out of the conservation system; nothing is guessed.</p>
+        <pre><code>$ chem balance "C3H8 + O2 -> CO2 + H2O"
+C3H8 + 5O2 -> 3CO2 + 4H2O
+
+Atom check (elements in equation order):
+  H: 8 = 8
+  C: 3 = 3
+  O: 10 = 10
+Charge: neutral (0 = 0)</code></pre>
+
+        <h2>Permanganate oxidation</h2>
+        <p>A classic textbook balance, including the chlorine that does not end up in a salt.</p>
+        <pre><code>$ chem balance "KMnO4 + HCl -> KCl + MnCl2 + Cl2 + H2O"
+2KMnO4 + 16HCl -> 2KCl + 2MnCl2 + 5Cl2 + 8H2O
+
+Atom check (elements in equation order):
+  K: 2 = 2
+  Mn: 2 = 2
+  O: 8 = 8
+  H: 16 = 16
+  Cl: 16 = 16
+Charge: neutral (0 = 0)</code></pre>
+
+        <h2>Ionic redox with charge conservation</h2>
+        <p>
+          Charges are conserved alongside atoms. Here both sides have a net charge of
+          +17.
+        </p>
+        <pre><code>$ chem balance "Fe^2+ + MnO4^- + H^+ -> Fe^3+ + Mn^2+ + H2O"
+5Fe^2+ + MnO4^- + 8H^+ -> 5Fe^3+ + Mn^2+ + 4H2O
+
+Atom check (elements in equation order):
+  Fe: 5 = 5
+  Mn: 1 = 1
+  O: 4 = 4
+  H: 8 = 8
+Charge: 17 = 17</code></pre>
+        <p>With the Python API the charge totals are fields:</p>
+        <pre><code>from chemistry_engine import balance_equation
+
+reaction = balance_equation("Fe^2+ + MnO4^- + H^+ -> Fe^3+ + Mn^2+ + H2O")
+reaction.charge_left    # 17
+reaction.charge_right   # 17</code></pre>
+
+        <h2>Hydrate stoichiometry</h2>
+        <p>
+          The pentahydrate is a single formula. One mole of it produces one mole of
+          anhydrous copper sulfate and five moles of water — with masses.
+        </p>
+        <pre><code>$ chem stoich --equation "CuSO4·5H2O -> CuSO4 + 5H2O" --feed "CuSO4·5H2O=1 mol"
+Balanced equation: CuSO4·5H2O -> CuSO4 + 5H2O
+Reaction extent  : 1 mol
+Limiting reagent : CuSO4·5H2O
+
+Reactants:
+  Species       Fed (mol)  Consumed (mol)  Remaining (mol)  Remaining (g)
+  CuSO4·5H2O            1               1                0              0
+
+Products:
+  Species       Produced (mol)     Mass (g)
+  CuSO4                      1      159.602
+  H2O                        5       90.075</code></pre>
+
+        <h2>When an equation has more than one balance</h2>
+        <p>
+          <code>C + O2 -&gt; CO + CO2</code> can be balanced in several independent ways
+          (pure CO, pure CO2, or a mixture). The engine returns a smallest valid
+          integer solution and says so rather than pretending the answer is unique.
+        </p>
+        <pre><code>$ chem balance "C + O2 -> CO + CO2"
+3C + 2O2 -> 2CO + CO2
+
+note: more than one independent balance exists; showing the smallest positive integer solution.
+
+Atom check (elements in equation order):
+  C: 3 = 3
+  O: 4 = 4
+Charge: neutral (0 = 0)</code></pre>
+        <p>In Python, the same fact is a field on the result:</p>
+        <pre><code>from chemistry_engine import balance_equation
+
+balance_equation("C + O2 -> CO + CO2").is_unique   # False</code></pre>
+
+        <h2>Elemental composition</h2>
+        <p>Hill order puts carbon first, then hydrogen, then the rest alphabetically.</p>
+        <pre><code>$ chem composition C6H12O6
+formula    : C6H12O6
+molar mass : 180.156 g/mol
+
+Elem  Name        Atoms   Mass (g/mol)    Mass %
+C     Carbon          6         72.066    40.002
+H     Hydrogen       12         12.096   6.71418
+O     Oxygen          6         95.994   53.2838</code></pre>
+
+        <h2>Next</h2>
+        <div class="next-links">
+          <a href="cli.html">Command line<span>The full CLI reference.</span></a>
+          <a href="library.html">Python API<span>All functions and result objects.</span></a>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="footer-brand" href="../index.html">
+            <img src="../assets/logo.svg" alt="" width="30" height="30">
+            <span>chemistry-engine</span>
+          </a>
+          <p class="footer-meta">A real chemistry engine in pure Python. Version 0.1.0.</p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="index.html">Documentation</a></li>
+          <li><a href="cli.html">CLI</a></li>
+          <li><a href="library.html">Python API</a></li>
+          <li><a href="https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0" rel="noopener">Release v0.1.0</a></li>
+          <li><a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-bottom">
+        © <span data-year>2026</span> chemistry-engine · Built from the public
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">repository</a>.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

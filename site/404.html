@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found — chemistry-engine</title>
+  <meta name="description" content="That page is not part of the chemistry-engine documentation.">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("chemistry-engine-theme");
+        var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = stored || (dark ? "dark" : "light");
+      } catch (error) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script defer src="assets/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <img src="assets/logo.svg" alt="" width="34" height="34">
+        <span>chemistry-engine<small>pure python chemistry engine</small></span>
+      </a>
+      <nav class="nav" id="primary-nav" data-nav aria-label="Primary">
+        <a href="docs/index.html">Docs</a>
+        <a href="docs/cli.html">CLI</a>
+        <a href="docs/library.html">Library</a>
+        <a href="docs/examples.html">Examples</a>
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub ↗</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"></path></svg>
+        </button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="docs-hero">
+      <div class="container">
+        <p class="kicker">404</p>
+        <h1>That page isn't in the reaction mixture.</h1>
+        <p>The link may be out of date, or the page may have moved. Try the docs or the project home.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="docs/index.html">Read the docs</a>
+          <a class="btn btn-ghost" href="index.html">Project home</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        © <span data-year>2026</span> chemistry-engine · Built from the public
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">repository</a>.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Command line — chemistry-engine</title>
+  <meta name="description" content="Reference for the chem CLI: element lookup, molar mass, composition, equation balancing, stoichiometry, formula notation, feeds, and JSON output.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("chemistry-engine-theme");
+        var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = stored || (dark ? "dark" : "light");
+      } catch (error) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script defer src="../assets/site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="../index.html">
+        <img src="../assets/logo.svg" alt="" width="34" height="34">
+        <span>chemistry-engine<small>pure python chemistry engine</small></span>
+      </a>
+      <nav class="nav" id="primary-nav" data-nav aria-label="Primary">
+        <a href="index.html">Docs</a>
+        <a href="cli.html" aria-current="page">CLI</a>
+        <a href="library.html">Library</a>
+        <a href="examples.html">Examples</a>
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub ↗</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"></path></svg>
+        </button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="docs-hero">
+      <div class="container">
+        <ol class="breadcrumb">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="index.html">Docs</a></li>
+          <li>Command line</li>
+        </ol>
+        <h1>Command line</h1>
+        <p>One <code>chem</code> command with seven subcommands, human-readable output, and <code>--json</code> everywhere.</p>
+      </div>
+    </section>
+
+    <div class="container docs-layout">
+      <aside class="docs-sidebar">
+        <p class="sidebar-title">Documentation</p>
+        <nav data-docs-nav aria-label="Documentation">
+          <a href="index.html">Getting started</a>
+          <a href="cli.html">Command line</a>
+          <a href="library.html">Python API</a>
+          <a href="examples.html">Worked examples</a>
+        </nav>
+        <hr class="sidebar-sep">
+        <nav aria-label="Elsewhere">
+          <a href="../index.html">Project home</a>
+          <a href="https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0" rel="noopener">Release v0.1.0</a>
+          <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub</a>
+        </nav>
+      </aside>
+
+      <article class="doc-body">
+        <h2>Synopsis</h2>
+        <pre><code>chem [-h] [--version] [--json] COMMAND ...
+
+COMMAND
+  element      look up one element
+  elements     list all 118 elements
+  mass         molar mass of one or more formulas
+  inspect      parse a formula and show its composition
+  composition  elemental mass percentages
+  balance      balance a chemical equation
+  stoich       limiting reagent and product amounts</code></pre>
+        <p>
+          <code>--json</code> is accepted before or after the subcommand. Every
+          subcommand returns exit code <code>0</code> on success and <code>2</code> on a
+          chemistry or parse error.
+        </p>
+
+        <h2>Commands</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Command</th><th>What it does</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><code>element</code></td><td>Resolve one element by atomic number, symbol, or English name.</td><td><code>chem element Fe</code></td></tr>
+              <tr><td><code>elements</code></td><td>List every element and its mass.</td><td><code>chem elements</code></td></tr>
+              <tr><td><code>mass</code></td><td>Molar mass of one or more formulas.</td><td><code>chem mass H2O C6H12O6</code></td></tr>
+              <tr><td><code>inspect</code></td><td>Parsed atom counts, charge, canonical formula, molar mass.</td><td><code>chem inspect "CuSO4·5H2O"</code></td></tr>
+              <tr><td><code>composition</code></td><td>Elemental masses and mass percentages in Hill order.</td><td><code>chem composition H2O</code></td></tr>
+              <tr><td><code>balance</code></td><td>Balance an equation and show the conservation checks.</td><td><code>chem balance "Fe + O2 -> Fe2O3"</code></td></tr>
+              <tr><td><code>stoich</code></td><td>Limiting reagent and amounts from mol or mass feeds.</td><td><code>chem stoich --equation ... --feed ...</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Formula notation</h2>
+        <p>
+          Formulas are parsed chemically, not with a regex. Element symbols are
+          case-sensitive: <code>Co</code> is cobalt, <code>CO</code> is carbon monoxide.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Form</th><th>Example</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>Counts</td><td><code>H2O</code>, <code>C6H12O6</code></td><td>Implicit 1; leading zeros rejected.</td></tr>
+              <tr><td>Groups</td><td><code>Ca(OH)2</code>, <code>K4[Fe(CN)6]</code></td><td>Nested <code>()</code>, <code>[]</code>, <code>{}</code>.</td></tr>
+              <tr><td>Hydrates</td><td><code>CuSO4·5H2O</code>, <code>CuSO4.5H2O</code></td><td><code>·</code>, <code>.</code>, and <code>*</code> separators.</td></tr>
+              <tr><td>Fractional hydrates</td><td><code>CaSO4·½H2O</code></td><td>Unicode fractions up to eighths.</td></tr>
+              <tr><td>Charges</td><td><code>SO4^2-</code>, <code>SO4²⁻</code>, <code>NH4+</code></td><td>Caret, Unicode superscript, or bare trailing sign.</td></tr>
+              <tr><td>Unicode subscripts</td><td><code>H₂O</code></td><td>Normalized to counts.</td></tr>
+              <tr><td>Electron</td><td><code>e^-</code></td><td>Zero atoms, charge −1; used for half-reactions.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><code>$ chem inspect "CaSO4·½H2O"
+formula    : CaSO4·½H2O
+charge     : 0
+atoms      : Ca 1, H 1, O 4.5, S 1
+molar mass : 145.142 g/mol</code></pre>
+
+        <h2>Equations</h2>
+        <p>
+          Arrows may be written as <code>-&gt;</code>, <code>→</code>, <code>=&gt;</code>, or
+          <code>=</code>. Reversible arrows (<code>&lt;=&gt;</code>, <code>⇌</code>,
+          <code>↔</code>) are preserved in the output.
+        </p>
+        <p>
+          Input coefficients are hints, not answers: <code>chem balance "2H2 + O2 -&gt; 2H2O"</code>
+          re-derives the smallest integer solution and returns the same coefficients.
+          Ionic equations must spell out charges so the engine can conserve them:
+        </p>
+        <pre><code>$ chem balance "Fe^2+ + MnO4^- + H^+ -> Fe^3+ + Mn^2+ + H2O"
+5Fe^2+ + MnO4^- + 8H^+ -> 5Fe^3+ + Mn^2+ + 4H2O
+
+Atom check (elements in equation order):
+  Fe: 5 = 5
+  Mn: 1 = 1
+  O: 4 = 4
+  H: 8 = 8
+Charge: 17 = 17</code></pre>
+        <div class="callout">
+          <p>
+            Some equations have more than one independent balance. The engine returns a
+            smallest valid integer solution and prints a note; the Python API exposes
+            <code>is_unique=False</code> for those cases.
+          </p>
+        </div>
+
+        <h2>Stoichiometry feeds</h2>
+        <p>
+          <code>--feed</code> is repeatable and accepts moles or mass. Every reactant in
+          the equation must be fed; feeding a product is rejected.
+        </p>
+        <pre><code>chem stoich --equation "N2 + 3H2 -> 2NH3" --feed "N2=28 g" --feed "H2=6 g"</code></pre>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Unit</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>mol</code>, <code>mmol</code>, <code>umol</code></td><td>Amount of substance.</td></tr>
+              <tr><td><code>g</code>, <code>kg</code>, <code>mg</code>, <code>ug</code></td><td>Mass, converted with the formula's molar mass.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>JSON output</h2>
+        <p>Every command accepts <code>--json</code>. For example:</p>
+        <pre><code>$ chem mass --json H2O
+[
+  {
+    "formula": "H2O",
+    "molar_mass_g_per_mol": 18.015
+  }
+]</code></pre>
+        <p>
+          <code>chem balance --json</code> exposes coefficients, per-element
+          conservation checks, net charge, and <code>is_unique</code>.
+          <code>chem stoich --json</code> exposes the feed, consumed, remaining, produced,
+          and mass maps.
+        </p>
+
+        <h2>Errors</h2>
+        <p>
+          Parse errors carry a column pointer on stderr and exit with status 2:
+        </p>
+        <pre><code>$ chem mass "Xx2"
+chem: error: invalid formula 'Xx2' at column 1: unknown element symbol 'Xx'
+  Xx2
+  ^
+$ echo $?
+2</code></pre>
+
+        <h2>Next</h2>
+        <div class="next-links">
+          <a href="library.html">Python API<span>Use the same engine from Python.</span></a>
+          <a href="examples.html">Worked examples<span>Real outputs for real reactions.</span></a>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="footer-brand" href="../index.html">
+            <img src="../assets/logo.svg" alt="" width="30" height="30">
+            <span>chemistry-engine</span>
+          </a>
+          <p class="footer-meta">A real chemistry engine in pure Python. Version 0.1.0.</p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="index.html">Documentation</a></li>
+          <li><a href="cli.html">CLI</a></li>
+          <li><a href="library.html">Python API</a></li>
+          <li><a href="https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0" rel="noopener">Release v0.1.0</a></li>
+          <li><a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-bottom">
+        © <span data-year>2026</span> chemistry-engine · Built from the public
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">repository</a>.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
