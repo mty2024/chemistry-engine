@@ -6,6 +6,7 @@ Checks:
 * every local ``href`` / ``src`` resolves to a real file;
 * every HTML page has a non-empty ``<title>``;
 * the generated element data has all 118 entries with the expected keys;
+* the generated engine metadata points at a real wheel;
 * the required site assets exist.
 
 Run after ``python tools/build_site.py``::
@@ -25,6 +26,7 @@ SITE = ROOT / "site"
 REQUIRED_PAGES = (
     "index.html",
     "404.html",
+    "playground.html",
     "docs/index.html",
     "docs/cli.html",
     "docs/library.html",
@@ -33,8 +35,10 @@ REQUIRED_PAGES = (
 REQUIRED_ASSETS = (
     "assets/styles.css",
     "assets/site.js",
+    "assets/playground.js",
     "assets/logo.svg",
     "assets/elements.json",
+    "assets/engine.json",
 )
 SKIP_PREFIXES = ("http://", "https://", "mailto:", "data:", "javascript:", "#")
 
@@ -71,7 +75,6 @@ def resolve_local_link(page: Path, raw: str) -> Path | None:
     if not path:
         return None
     if path.startswith("/"):
-        # Site-root relative (not used today, but handle sensibly).
         return SITE / path.lstrip("/")
     return (page.parent / path).resolve()
 
@@ -124,6 +127,27 @@ def check_element_data(errors: list[str]) -> None:
                 return
 
 
+def check_engine_data(errors: list[str]) -> None:
+    path = SITE / "assets" / "engine.json"
+    if not path.is_file():
+        return
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        errors.append(f"site/assets/engine.json: invalid JSON ({error})")
+        return
+    for key in ("version", "wheel", "pyodide"):
+        if not payload.get(key):
+            errors.append(f"site/assets/engine.json: missing {key!r}")
+            return
+    wheel = SITE / "assets" / str(payload["wheel"])
+    if not wheel.is_file():
+        errors.append(f"site/assets/engine.json points at missing wheel {wheel.name}")
+        return
+    if wheel.suffix != ".whl":
+        errors.append(f"site/assets/{wheel.name}: expected a .whl file")
+
+
 def main() -> int:
     errors: list[str] = []
     if not SITE.is_dir():
@@ -132,6 +156,7 @@ def main() -> int:
     check_required_files(errors)
     html_count = check_html_pages(errors)
     check_element_data(errors)
+    check_engine_data(errors)
     if errors:
         print(f"site validation failed ({len(errors)} problem(s)):")
         for error in errors:

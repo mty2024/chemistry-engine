@@ -1,6 +1,6 @@
 # chemistry-engine
 
-[Website](https://mty2024.github.io/chemistry-engine/) · [Documentation](https://mty2024.github.io/chemistry-engine/docs/) · [Release v0.1.0](https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0)
+[Website](https://mty2024.github.io/chemistry-engine/) · [Playground](https://mty2024.github.io/chemistry-engine/playground.html) · [Documentation](https://mty2024.github.io/chemistry-engine/docs/) · [Release v0.1.0](https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0)
 
 A real chemistry engine in pure Python — no third-party dependencies.
 

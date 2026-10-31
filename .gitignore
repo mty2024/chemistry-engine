@@ -13,3 +13,5 @@ dist/
 htmlcov/
 
 site/assets/elements.json
+site/assets/engine.json
+site/assets/chemistry_engine-*.whl

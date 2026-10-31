@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Playground — chemistry-engine</title>
+  <meta name="description" content="Run the real chemistry-engine Python package in your browser. Compute molar mass, composition, balance equations, and calculate limiting reagents with Pyodide.">
+  <meta property="og:title" content="chemistry-engine playground">
+  <meta property="og:description" content="Run the real chemistry engine in your browser, powered by Pyodide.">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("chemistry-engine-theme");
+        var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = stored || (dark ? "dark" : "light");
+      } catch (error) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script defer src="assets/site.js"></script>
+  <script defer src="assets/playground.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <img src="assets/logo.svg" alt="" width="34" height="34">
+        <span>chemistry-engine<small>pure python chemistry engine</small></span>
+      </a>
+      <nav class="nav" id="primary-nav" data-nav aria-label="Primary">
+        <a href="docs/index.html">Docs</a>
+        <a href="playground.html" aria-current="page">Playground</a>
+        <a href="docs/cli.html">CLI</a>
+        <a href="docs/library.html">Library</a>
+        <a href="docs/examples.html">Examples</a>
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub ↗</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"></path></svg>
+        </button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="docs-hero">
+      <div class="container">
+        <ol class="breadcrumb">
+          <li><a href="index.html">Home</a></li>
+          <li>Playground</li>
+        </ol>
+        <p class="kicker">In the browser</p>
+        <h1>Run the engine.</h1>
+        <p>
+          This page downloads the <strong>actual chemistry-engine wheel</strong> and runs it
+          with Pyodide, a Python runtime compiled to WebAssembly. No server, no API keys —
+          the same formulas, rational balancing, and stoichiometry as the CLI.
+        </p>
+        <div class="engine-banner" data-engine-banner data-state="idle">
+          <span class="engine-dot" aria-hidden="true"></span>
+          <span data-engine-status>Python runtime not loaded. The first run downloads about 12 MB and can take a minute on a slow connection.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <noscript>
+          <p class="callout">The playground needs JavaScript and WebAssembly. Use the CLI or Python API instead.</p>
+        </noscript>
+
+        <div class="playground">
+          <form class="playground-panel" data-playground-form>
+            <div class="op-tabs" role="tablist" aria-label="Calculation type">
+              <button type="button" role="tab" data-op="mass" aria-selected="true">Molar mass</button>
+              <button type="button" role="tab" data-op="composition" aria-selected="false">Composition</button>
+              <button type="button" role="tab" data-op="balance" aria-selected="false">Balance</button>
+              <button type="button" role="tab" data-op="stoich" aria-selected="false">Stoichiometry</button>
+            </div>
+
+            <div class="op-panel" data-panel="mass">
+              <div class="field">
+                <label for="mass-formula">Formula</label>
+                <input id="mass-formula" type="text" data-formula value="CuSO4·5H2O" autocomplete="off" spellcheck="false">
+              </div>
+              <p class="playground-hint">Groups, hydrates, charges, Unicode subscripts, and <code>e^-</code> all work.</p>
+            </div>
+
+            <div class="op-panel" data-panel="composition" hidden>
+              <div class="field">
+                <label for="composition-formula">Formula</label>
+                <input id="composition-formula" type="text" data-formula value="C6H12O6" autocomplete="off" spellcheck="false">
+              </div>
+              <p class="playground-hint">Elemental masses and mass percentages, in Hill order.</p>
+            </div>
+
+            <div class="op-panel" data-panel="balance" hidden>
+              <div class="field">
+                <label for="balance-equation">Equation</label>
+                <textarea id="balance-equation" data-equation rows="3" spellcheck="false">Fe + O2 -&gt; Fe2O3</textarea>
+              </div>
+              <p class="playground-hint">Arrows: <code>-&gt;</code>, <code>→</code>, <code>=&gt;</code>, <code>=</code>; ions like <code>Fe^2+</code>.</p>
+            </div>
+
+            <div class="op-panel" data-panel="stoich" hidden>
+              <div class="field">
+                <label for="stoich-equation">Equation</label>
+                <textarea id="stoich-equation" data-equation rows="2" spellcheck="false">N2 + 3H2 -&gt; 2NH3</textarea>
+              </div>
+              <div class="field">
+                <span class="field-label">Reactant feeds</span>
+                <div data-feeds>
+                  <div class="feed-row">
+                    <input type="text" data-feed-species value="N2" placeholder="Species" aria-label="Feed species" autocomplete="off">
+                    <input type="number" data-feed-amount step="any" value="1" placeholder="Amount" aria-label="Feed amount">
+                    <select data-feed-unit aria-label="Feed unit">
+                      <option value="mol">mol</option><option value="mmol">mmol</option><option value="umol">umol</option>
+                      <option value="g">g</option><option value="kg">kg</option><option value="mg">mg</option><option value="ug">ug</option>
+                    </select>
+                    <button type="button" class="feed-remove" data-remove-feed aria-label="Remove feed">×</button>
+                  </div>
+                  <div class="feed-row">
+                    <input type="text" data-feed-species value="H2" placeholder="Species" aria-label="Feed species" autocomplete="off">
+                    <input type="number" data-feed-amount step="any" value="2" placeholder="Amount" aria-label="Feed amount">
+                    <select data-feed-unit aria-label="Feed unit">
+                      <option value="mol">mol</option><option value="mmol">mmol</option><option value="umol">umol</option>
+                      <option value="g">g</option><option value="kg">kg</option><option value="mg">mg</option><option value="ug">ug</option>
+                    </select>
+                    <button type="button" class="feed-remove" data-remove-feed aria-label="Remove feed">×</button>
+                  </div>
+                </div>
+                <button type="button" class="feed-add" data-add-feed>+ Add feed</button>
+              </div>
+            </div>
+
+            <div class="playground-actions">
+              <button class="btn btn-primary" type="submit" data-run>Run</button>
+              <button class="btn btn-ghost" type="button" data-example>Run example</button>
+            </div>
+          </form>
+
+          <section class="playground-output" aria-label="Playground output">
+            <div class="output-head">
+              <span>Output</span>
+              <button class="copy-inline" type="button" data-copy-output>Copy</button>
+            </div>
+            <pre data-playground-output data-no-copy aria-live="polite">Ready when you are. Pick a tool, edit the input, and press Run.</pre>
+          </section>
+        </div>
+
+        <p class="explorer-note">
+          Pyodide and the wheel are fetched from public CDNs; the engine itself is built
+          from this repository at deploy time. First run needs a network connection and can
+          take a minute or two on slow links.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="footer-brand" href="index.html">
+            <img src="assets/logo.svg" alt="" width="30" height="30">
+            <span>chemistry-engine</span>
+          </a>
+          <p class="footer-meta">A real chemistry engine in pure Python. Version 0.1.0.</p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="docs/index.html">Documentation</a></li>
+          <li><a href="playground.html">Playground</a></li>
+          <li><a href="docs/cli.html">CLI</a></li>
+          <li><a href="docs/library.html">Python API</a></li>
+          <li><a href="https://github.com/mty2024/chemistry-engine/releases/tag/v0.1.0" rel="noopener">Release v0.1.0</a></li>
+          <li><a href="https://github.com/mty2024/chemistry-engine" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-bottom">
+        © <span data-year>2026</span> chemistry-engine · Built from the public
+        <a href="https://github.com/mty2024/chemistry-engine" rel="noopener">repository</a>.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

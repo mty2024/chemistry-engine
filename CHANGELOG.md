@@ -6,6 +6,14 @@ All notable changes to `chemistry-engine` are documented here. The format follow
 
 ## [Unreleased]
 
+### Added
+
+- GitHub Pages site (`site/`) with a responsive landing page, interactive element
+  explorer, light/dark themes, and documentation pages.
+- In-browser playground (`/playground.html`) that installs the real
+  `chemistry_engine` wheel with Pyodide and runs molar mass, composition, exact
+  balancing, and stoichiometry entirely client-side.
+
 ## [0.1.0] - 2026-10-30
 
 ### Added
