@@ -9,9 +9,10 @@
   };
 
   const PYODIDE_HOSTS = [
-    (version) => `https://cdn.jsdelivr.net/pyodide/v${version}/full/`,
     (version) => `https://fastly.jsdelivr.net/pyodide/v${version}/full/`,
+    (version) => `https://gcore.jsdelivr.net/pyodide/v${version}/full/`,
     (version) => `https://unpkg.com/pyodide@${version}/`,
+    (version) => `https://cdn.jsdelivr.net/pyodide/v${version}/full/`,
   ];
 
   const RUNNER = String.raw`
