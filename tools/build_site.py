@@ -62,6 +62,9 @@ def write_engine_wheel() -> None:
     for stale in ASSETS.glob("chemistry_engine-*.whl"):
         stale.unlink()
     if build_wheel is not None:
+        # The Pages workflow may run this script without having run
+        # tools/build_dist.py first, so make sure the output directory exists.
+        (ROOT / "dist").mkdir(exist_ok=True)
         wheel = build_wheel()
     else:  # pragma: no cover
         candidates = sorted((ROOT / "dist").glob(f"chemistry_engine-{__version__}-*.whl"))
