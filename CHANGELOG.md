@@ -13,6 +13,9 @@ All notable changes to `chemistry-engine` are documented here. The format follow
 - In-browser playground (`/playground.html`) that installs the real
   `chemistry_engine` wheel with Pyodide and runs molar mass, composition, exact
   balancing, and stoichiometry entirely client-side.
+- Daily `Chemistry audit` workflow (`.github/workflows/chemistry-audit.yml`):
+  unit tests, a deterministic self-consistency audit, wheel/site builds, and a
+  real-browser Playground smoke test.
 
 ## [0.1.0] - 2026-10-30
 

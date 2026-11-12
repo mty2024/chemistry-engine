@@ -20,4 +20,5 @@ Multi-context layout — one `CONTEXT.md` per context, with a root `CONTEXT-MAP.
 - Refresh the periodic-table data from CIAAW: `python tools/update_periodic_table.py`
 - Build and validate the documentation site: `python tools/build_site.py` then `python tools/check_site.py`; the site source is `site/` (plain HTML/CSS/JS) and deploys through `.github/workflows/pages.yml`.
 - The in-browser playground (`site/playground.html`) installs the generated wheel into Pyodide; `tools/build_site.py` copies the wheel and `engine.json` into `site/assets/` for it.
+- Self-consistency audit: `python tools/audit_chemistry.py`. Live playground smoke test: `python tools/check_playground.py` (needs Playwright). The daily `Chemistry audit` workflow runs both at 09:00 Asia/Shanghai.
 - Package metadata and the `chem` console script live in `pyproject.toml` (entry point `chemistry_engine.cli:main`).
